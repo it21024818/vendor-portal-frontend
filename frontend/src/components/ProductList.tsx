@@ -5,6 +5,7 @@ import StarRateIcon from '@mui/icons-material/StarRate';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { useNavigate } from 'react-router-dom';
 import { SearchBar } from "./SearchBar";
 import CustomButton from "./CustomButton";
 
@@ -27,47 +28,73 @@ interface ProductItemProps {
   product: Product;
 }
 
-const ProductItem: React.FC<ProductItemProps> = ({ product }) => (
-  <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 2 }}>
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 19 }}>
-      <Typography>{product.sku}</Typography>
-      <img src={product.imageSrc} alt={product.name} style={{ width: 66, height: 66 }} />
-      <Typography>{product.name}</Typography>
-      <Typography>{product.price}</Typography>
-    </Box>
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <IconButton color="primary"><EditIcon /></IconButton>
-      <IconButton color="primary"><DeleteIcon /></IconButton>
-      <IconButton color="primary"><StarRateIcon /></IconButton>
-    </Box>
-  </Box>
-);
+const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
+  const navigate = useNavigate();
 
-const ProductList = () => (
-  <Box sx={{ p: 4, bgcolor: 'white', display: 'flex', flexDirection: 'column', gap: 4 }}>
-    <Typography variant="h3" sx={{ fontWeight: 'bold' }}>PRODUCTS</Typography>
-    <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  const handleEditClick = (sku: string) => {
+    navigate(`/edit/${sku}`);
+  };
+
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 19 }}>
+        <Typography>{product.sku}</Typography>
+        <img src={product.imageSrc} alt={product.name} style={{ width: 66, height: 66 }} />
+        <Typography>{product.name}</Typography>
+        <Typography>{product.price}</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <IconButton color="primary" onClick={() => handleEditClick(product.sku)}><EditIcon /></IconButton>
+        <IconButton color="primary"><DeleteIcon /></IconButton>
+        <IconButton color="primary"><StarRateIcon /></IconButton>
+      </Box>
+    </Box>
+  );
+};
+
+const ProductList = () => {
+  const navigate = useNavigate();
+
+  const handleNewProductClick = () => {
+    navigate('/add');
+  };
+
+  const handleFavoritesClick = () => {
+    navigate('/favorites');
+  };
+
+  return (
+    <Box sx={{ p: 4, bgcolor: 'white', display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <Typography variant="h3" sx={{ fontWeight: 'bold' }}>PRODUCTS</Typography>
+      <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ marginRight: 'auto' }}>
-            <SearchBar />
+          <SearchBar />
         </div>
-        <CustomButton onClick={() => {}}>New Product</CustomButton>
-        <IconButton color="primary" style={{ border: '2px solid #1976d2', borderRadius: '4px', marginLeft: '5px' }}><StarRateIcon /></IconButton>
-    </Box>
+        <CustomButton onClick={handleNewProductClick}>New Product</CustomButton>
+        <IconButton
+          color="primary"
+          style={{ border: '2px solid #1976d2', borderRadius: '4px', marginLeft: '5px' }}
+          onClick={handleFavoritesClick}
+        >
+          <StarRateIcon />
+        </IconButton>
+      </Box>
 
-    <Box sx={{ display: 'flex', gap: 20, alignItems: 'center', mt: 4 }}>
+      <Box sx={{ display: 'flex', gap: 20, alignItems: 'center', mt: 4 }}>
         <Typography variant="body1" color="primary" fontWeight="bold">SKU</Typography>
         <Typography variant="body1" color="primary" fontWeight="bold">IMAGE</Typography>
-        <Typography variant="body1" color="primary" fontWeight="bold" >PRODUCT NAME</Typography>
+        <Typography variant="body1" color="primary" fontWeight="bold">PRODUCT NAME</Typography>
         <Typography variant="body1" color="primary" fontWeight="bold">PRICE</Typography>
-    </Box>
+      </Box>
 
-    {products.map(product => (
-      <React.Fragment key={product.sku}>
-        <ProductItem product={product} />
-        <Divider />
-      </React.Fragment>
-    ))}
-  </Box>
-);
+      {products.map(product => (
+        <React.Fragment key={product.sku}>
+          <ProductItem product={product} />
+          <Divider />
+        </React.Fragment>
+      ))}
+    </Box>
+  );
+};
 
 export default ProductList;

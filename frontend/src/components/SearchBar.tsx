@@ -1,17 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Button, IconButton, InputBase, useTheme } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 
 interface SearchButtonProps {
   imgSrc: string;
   altText: string;
+  onClick: () => void;
 }
 
-const SearchButton: React.FC<SearchButtonProps> = ({ imgSrc, altText }) => {
+const SearchButton: React.FC<SearchButtonProps> = ({ imgSrc, altText, onClick }) => {
   const theme = useTheme();
   return (
     <Button
-      type="submit"
+      type="button"
+      onClick={onClick}
       sx={{
         display: 'flex',
         gap: 1,
@@ -38,6 +41,13 @@ const SearchButton: React.FC<SearchButtonProps> = ({ imgSrc, altText }) => {
 
 export const SearchBar: React.FC = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchClick = () => {
+    navigate(`/search?query=${searchQuery}`);
+  };
+
   return (
     <Box
       component="form"
@@ -60,6 +70,8 @@ export const SearchBar: React.FC = () => {
         id="searchInput"
         placeholder="Search for products"
         aria-label="Search for products"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
         sx={{
           flex: 1,
           minWidth: 450,
@@ -68,7 +80,11 @@ export const SearchBar: React.FC = () => {
           color: 'text.secondary',
         }}
       />
-      <SearchButton imgSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/5daab6410afc58e66e8eb0710121ba2d1f382c99f224e102c0a1db8611ccc2d5?apiKey=071d2091314e4e458e22e8bb8ec1920c&" altText="Search Icon" />
+      <SearchButton
+        imgSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/5daab6410afc58e66e8eb0710121ba2d1f382c99f224e102c0a1db8611ccc2d5?apiKey=071d2091314e4e458e22e8bb8ec1920c&"
+        altText="Search Icon"
+        onClick={handleSearchClick}
+      />
     </Box>
   );
 }
