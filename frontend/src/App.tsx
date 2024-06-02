@@ -7,7 +7,7 @@ import ProductList from './components/ProductList';
 // import ProductDetail from './components/ProductDetail';
 import AddEditProduct from './components/AddEditProduct';
 import FavoriteProducts from './components/FavoriteProducts';
-// import SearchResults from './components/SearchResults';
+import SearchResults from './components/SearchResults';
 import Header from './components/Header';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './styles/theme';
@@ -31,7 +31,7 @@ const App: React.FC = () => {
             <Route path="/add" element={<AddEditProduct />} />
             <Route path="/edit/:id" element={<AddEditProduct />} />
             <Route path="/favorites" element={<FavoriteProducts />} />
-            {/* <Route path="/search" element={<SearchResults />} /> */}
+            <Route path="/search" element={<SearchResults />} />
           </Routes>
         </Container>
       </Router>
