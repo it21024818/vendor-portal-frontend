@@ -56,7 +56,7 @@ const ProductList = () => {
   const navigate = useNavigate();
 
   const handleNewProductClick = () => {
-    navigate('/add');
+    navigate('/new');
   };
 
   const handleFavoritesClick = () => {

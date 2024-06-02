@@ -1,26 +1,108 @@
-import React from "react";
-import { TextField, Button, Typography, Box } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { RootState } from '../redux/store';
+import { addProduct, editProduct } from '../redux/slices/productSlice';
+import { TextField, Button, Typography, Box, IconButton } from "@mui/material";
 import InputField from "./InputField";
 import CustomButton from "./CustomButton";
+import { Product } from "../types/Product";
+import { AddAPhoto, Delete, Star, StarBorder } from "@mui/icons-material";
 
 const AddEditProduct: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { products } = useSelector((state: RootState) => state.products);
+
+  const [product, setProduct] = useState<Product>({
+    id: '',
+    sku: '',
+    quantity: 0,
+    name: '',
+    images: [],
+    description: '',
+    featuredImage: ''
+  });
+
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [mainImage, setMainImage] = useState<string>('');
+
+  useEffect(() => {
+    if (id) {
+      const existingProduct = products.find(p => p.id === id);
+      if (existingProduct) {
+        setProduct(existingProduct);
+        setPreviewImages(existingProduct.images);
+        setMainImage(existingProduct.featuredImage);
+      }
+    }
+  }, [id, products]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files!);
+    setSelectedFiles([...selectedFiles, ...files]);
+
+    const filePreviews = files.map(file => URL.createObjectURL(file));
+    setPreviewImages([...previewImages, ...filePreviews]);
+  };
+
+  const handleAddImagesClick = () => {
+    document.getElementById('fileInput')?.click();
+  };
+
+  const handleImageDelete = (index: number) => {
+    const updatedFiles = selectedFiles.filter((_, i) => i !== index);
+    setSelectedFiles(updatedFiles);
+
+    const updatedPreviews = previewImages.filter((_, i) => i !== index);
+    setPreviewImages(updatedPreviews);
+  };
+
+  const handleMainImageSelect = (image: string) => {
+    setMainImage(image);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProduct({ ...product, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const updatedProduct = {
+      ...product,
+      images: previewImages,
+      featuredImage: mainImage
+    };
+
+    if (id) {
+      dispatch(editProduct(updatedProduct) as any);
+    } else {
+      dispatch(addProduct(updatedProduct) as any);
+    }
+
+    navigate('/');
+  };
+
   return (
     <Box component="section" sx={{ display: 'flex', flexDirection: 'column', p: 5, backgroundColor: 'white' }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4, width: '100%', maxWidth: 1169 }}>
         <Box component="header" sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
           <Typography variant="h1" sx={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#333', letterSpacing: '0.3rem', mr: 2 }}>PRODUCTS</Typography>
           <Box component="img" src="https://cdn.builder.io/api/v1/image/assets/TEMP/7b1e07a70d97bc25413f9bba2c6783d69033471c2059e22ba68cdb87164d67e3?apiKey=071d2091314e4e458e22e8bb8ec1920c&" sx={{ width: 37, height: 37, mr: 1 }} alt="" />
-          <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 'bold', letterSpacing: '0.1rem' }}>Add new product</Typography>
+          <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 'bold', letterSpacing: '0.1rem' }}>{id ? 'Edit' : 'Add'} Product</Typography>
         </Box>
-        <form>
-          <InputField id="sku" label="SKU" type="text" />
+        <form onSubmit={handleSubmit}>
+          <InputField id="sku" label="SKU" type="text" name="sku" value={product.sku} onChange={handleChange} />
           <Box sx={{ display: 'flex', gap: 2, mt: 3, width: '100%' }}>
-            <InputField id="name" label="Name" type="text" />
-            <InputField id="qty" label="QTY" type="number" />
+            <InputField id="name" label="Name" type="text" name="name" value={product.name} onChange={handleChange} />
+            <InputField id="quantity" label="QTY" type="number" name="quantity" value={product.quantity} onChange={handleChange} />
           </Box>
           <Typography variant="body1" sx={{ mt: 4 }}>Product Description</Typography>
           <Typography variant="body2" sx={{ mt: 1 }}>A small description about the product</Typography>
-          <TextField id="description" variant="outlined" multiline rows={4} InputProps={{ sx: { '& .MuiOutlinedInput-notchedOutline': { border: 'none', }, }, }}  sx={{ mt: 2, backgroundColor: '#f5f5f5', width: '100%' }} />
+          <TextField id="description" name="description" variant="outlined" multiline rows={4} value={product.description} onChange={handleChange} InputProps={{ sx: { '& .MuiOutlinedInput-notchedOutline': { border: 'none', }, }, }}  sx={{ mt: 2, backgroundColor: '#f5f5f5', width: '100%' }} />
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'space-between', mt: 4, width: 335 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', color: '#333' }}>
               <Typography variant="body1">Product Images</Typography>
@@ -29,13 +111,13 @@ const AddEditProduct: React.FC = () => {
             <Box sx={{ display: 'flex', flexDirection: 'column', cursor: 'pointer', width: 150 }}>
               <input
                 type="file"
-                // ref={fileInputRef}
-                // onChange={handleFileChange}
+                id="fileInput"
+                onChange={handleFileChange}
                 multiple
                 style={{ display: 'none' }}
               />
               <Typography
-                // onClick={handleAddImagesClick}
+                onClick={handleAddImagesClick}
                 sx={{
                   color: 'primary.main',
                   textDecoration: 'underline',
@@ -48,9 +130,22 @@ const AddEditProduct: React.FC = () => {
               </Typography>
             </Box>
           </Box>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}>
+            {previewImages.map((image, index) => (
+              <Box key={index} sx={{ position: 'relative' }}>
+                <Box component="img" src={image} alt={`Preview ${index}`} sx={{ width: 100, height: 100, objectFit: 'cover' }} />
+                <IconButton onClick={() => handleImageDelete(index)} sx={{ position: 'absolute', top: 0, right: 0, color: 'red' }}>
+                  <Delete />
+                </IconButton>
+                <IconButton onClick={() => handleMainImageSelect(image)} sx={{ position: 'absolute', bottom: 0, right: 0, color: 'yellow' }}>
+                  {mainImage === image ? <Star /> : <StarBorder />}
+                </IconButton>
+              </Box>
+            ))}
+          </Box>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
-            <CustomButton onClick={() => {}}>
-              Add product
+            <CustomButton onClick={() => handleSubmit} type="submit">
+              {id ? 'Save changes' : 'Add Product'}
             </CustomButton>
           </Box>
         </form>

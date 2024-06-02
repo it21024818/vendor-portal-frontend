@@ -28,7 +28,7 @@ const App: React.FC = () => {
           <Routes> {/* Use Routes directly */}
             <Route path="/" element={<ProductList />} />
             {/* <Route path="/product/:id" element={<ProductDetail />} /> */}
-            <Route path="/add" element={<AddEditProduct />} />
+            <Route path="/new" element={<AddEditProduct />} />
             <Route path="/edit/:id" element={<AddEditProduct />} />
             <Route path="/favorites" element={<FavoriteProducts />} />
             <Route path="/search" element={<SearchResults />} />
