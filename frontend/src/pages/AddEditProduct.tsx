@@ -4,17 +4,20 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { RootState } from '../redux/store';
 import { addProduct, editProduct } from '../redux/slices/productSlice';
 import { TextField, Button, Typography, Box, IconButton } from "@mui/material";
-import InputField from "./InputField";
-import CustomButton from "./CustomButton";
+import InputField from "../components/InputField";
+import CustomButton from "../components/CustomButton";
 import { Product } from "../types/Product";
 import { AddAPhoto, Delete, Star, StarBorder } from "@mui/icons-material";
 
+// Component for adding or editing a product
 const AddEditProduct: React.FC = () => {
+  // Get the product ID from the URL params
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { products } = useSelector((state: RootState) => state.products);
 
+  // State variables to manage the product data and images
   const [product, setProduct] = useState<Product>({
     id: '',
     sku: '',
@@ -29,6 +32,7 @@ const AddEditProduct: React.FC = () => {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [mainImage, setMainImage] = useState<string>('');
 
+  // Fetch existing product data when editing
   useEffect(() => {
     if (id) {
       const existingProduct = products.find(p => p.id === id);
@@ -40,6 +44,7 @@ const AddEditProduct: React.FC = () => {
     }
   }, [id, products]);
 
+  // Handle file input change
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files!);
     setSelectedFiles([...selectedFiles, ...files]);
@@ -48,10 +53,12 @@ const AddEditProduct: React.FC = () => {
     setPreviewImages([...previewImages, ...filePreviews]);
   };
 
+  // Show file input dialog when clicking on Add Images
   const handleAddImagesClick = () => {
     document.getElementById('fileInput')?.click();
   };
 
+  // Delete image from preview
   const handleImageDelete = (index: number) => {
     const updatedFiles = selectedFiles.filter((_, i) => i !== index);
     setSelectedFiles(updatedFiles);
@@ -60,29 +67,35 @@ const AddEditProduct: React.FC = () => {
     setPreviewImages(updatedPreviews);
   };
 
+  // Select main image from preview
   const handleMainImageSelect = (image: string) => {
     setMainImage(image);
   };
 
+  // Handle input change for product details
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    // Prepare updated product data
     const updatedProduct = {
       ...product,
       images: previewImages,
       featuredImage: mainImage
     };
 
+    // Dispatch action to add or edit product
     if (id) {
       dispatch(editProduct(updatedProduct) as any);
     } else {
       dispatch(addProduct(updatedProduct) as any);
     }
 
+    // Navigate back to products list
     navigate('/');
   };
 

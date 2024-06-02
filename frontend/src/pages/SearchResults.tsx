@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Box, Container, Typography, Divider, IconButton, Avatar } from "@mui/material";
-import { SearchBar } from "./SearchBar";
-import CustomButton from "./CustomButton";
+import { SearchBar } from "../components/SearchBar";
+import CustomButton from "../components/CustomButton";
 import StarRateIcon from '@mui/icons-material/StarRate';
 
 type Product = {

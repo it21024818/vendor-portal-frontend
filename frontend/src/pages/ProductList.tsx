@@ -6,8 +6,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';
-import { SearchBar } from "./SearchBar";
-import CustomButton from "./CustomButton";
+import { SearchBar } from "../components/SearchBar";
+import CustomButton from "../components/CustomButton";
 
 interface Product {
   sku: string;
