@@ -43,9 +43,9 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => (
   </Box>
 );
 
-const ProductList = () => (
+const FavoriteProducts = () => (
   <Box sx={{ p: 4, bgcolor: 'white', display: 'flex', flexDirection: 'column', gap: 4 }}>
-    <Typography variant="h3" sx={{ fontWeight: 'bold' }}>PRODUCTS</Typography>
+    <Typography variant="h3" sx={{ fontWeight: 'bold' }}>FAVORITE PRODUCTS</Typography>
     <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ marginRight: 'auto' }}>
             <SearchBar />
@@ -70,4 +70,4 @@ const ProductList = () => (
   </Box>
 );
 
-export default ProductList;
+export default FavoriteProducts;
