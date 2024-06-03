@@ -9,6 +9,7 @@ interface InputFieldProps {
   value: string | number;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   className?: string;
+  required?: boolean;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -18,7 +19,8 @@ const InputField: React.FC<InputFieldProps> = ({
   name,
   value,
   onChange,
-  className
+  className,
+  required
 }) => (
   <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mt: 3 }}>
     <Typography variant="body1">{label}</Typography>
@@ -37,6 +39,7 @@ const InputField: React.FC<InputFieldProps> = ({
         },
       }}
       sx={{ flexShrink: 0, maxWidth: '100%', backgroundColor: '#f5f5f5', height: 45, width: 400 }}
+      required={required}
     />
   </Box>
 );
